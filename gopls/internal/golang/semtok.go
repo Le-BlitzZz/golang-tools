@@ -739,6 +739,23 @@ func (tv *tokenVisitor) ident(id *ast.Ident) {
 		return
 	}
 
+	if v, ok := obj.(*types.Var); ok && v.IsField() && v.Embedded() && tv.inEmbeddedStructFieldDecl() {
+		// embedded marker only at declaration site
+		mods = append(mods, semtok.ModEmbedded)
+
+		// In the declaration `*Config`, color `Config` as the base type (struct),
+		// but keep uses (db.Config) colored by the full field type (*Config).
+		base := derefPointers(v.Type())
+
+		mods = stripTypeMods(mods) // remove pointer/struct/... modifiers derived from *Config
+		mods = appendTypeModifiers(mods, base)
+
+		// builtin embedded (int/float64/...) = defaultLibrary
+		if isDefaultLibraryBaseType(base) {
+			mods = append(mods, semtok.ModDefaultLibrary)
+		}
+	}
+
 	if tv.isShadowing(id) {
 		mods = append(mods, semtok.ModShadowing)
 	}
