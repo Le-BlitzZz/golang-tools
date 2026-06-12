@@ -599,6 +599,9 @@ func (tv *tokenVisitor) appendObjectModifiers(mods []semtok.Modifier, obj types.
 
 	case *types.Const:
 		mods = append(mods, semtok.ModReadonly)
+		if pkg := obj.Pkg(); pkg == nil || obj.Parent() != pkg.Scope() {
+			mods = append(mods, semtok.ModNonStatic)
+		}
 		return semtok.TokVariable, mods
 
 	case *types.Var:
