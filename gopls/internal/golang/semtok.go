@@ -605,10 +605,13 @@ func (tv *tokenVisitor) appendObjectModifiers(mods []semtok.Modifier, obj types.
 		switch obj.Kind() {
 		case types.PackageVar:
 			mods = append(mods, semtok.ModStatic)
-		case types.RecvVar, types.ParamVar:
+		case types.ParamVar:
 			return semtok.TokParameter, mods
+		case types.RecvVar:
+			return semtok.TokReceiver, mods
 		case types.FieldVar:
 			return semtok.TokProperty, mods
+		case types.ResultVar:
 		}
 		return semtok.TokVariable, mods
 
