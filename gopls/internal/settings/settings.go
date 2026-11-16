@@ -1582,6 +1582,8 @@ func (o *Options) EnabledSemanticTokenModifiers() map[semtok.Modifier]bool {
 		}
 		copy[semtok.Modifier(m)] = true
 	}
+	copy[semtok.ModNonStatic] = true
+	copy[semtok.ModEmbedded] = true
 	return copy
 }
 
@@ -1603,6 +1605,7 @@ func (o *Options) EnabledSemanticTokenTypes() map[semtok.Type]bool {
 	if o.NoSemanticNumber {
 		copy[semtok.TokNumber] = false
 	}
+	copy[semtok.TokReceiver] = true
 	return copy
 }
 
